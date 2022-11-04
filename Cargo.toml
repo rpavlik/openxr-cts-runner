@@ -13,5 +13,4 @@ eframe = {version = "0.19.0", features = ["persistence"]}
 egui = "0.19.0"
 serde = {version = "1.0", features = ["derive"]}
 subprocess = "0.2.9"
-command-run = "1.1"
 thiserror = "1.0"
