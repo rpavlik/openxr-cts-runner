@@ -38,27 +38,73 @@ impl CtsLauncherApp {
 impl eframe::App for CtsLauncherApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         // let state = self.state.take()
-        match &self.state {
+        let Self { config, state } = self;
+
+        match state {
             State::Configuring => {
                 let should_launch = egui::TopBottomPanel::bottom("launch")
                     .show(ctx, |ui| ui.add(egui::Button::new("Launch")).clicked())
                     .inner;
                 let config_result = egui::CentralPanel::default()
-                    .show(ctx, |ui| ui.vertical(|ui| self.config.add_ui(ui)).inner)
+                    .show(ctx, |ui| ui.vertical(|ui| config.add_ui(ui)).inner)
                     .inner;
-                self.config = config_result.new_config;
+                *config = config_result.new_config;
                 if should_launch || config_result.should_launch {
-                    self.state = State::start_running(&self.config);
+                    self.state = State::start_running(config);
                 }
             }
-            State::Running(_) => {
-                let cancel = egui::TopBottomPanel::bottom("cancel")
-                    .show(ctx, |ui| ui.add(egui::Button::new("Cancel")).clicked())
+            State::Running(data) => {
+                if let Err(e) = data.poll() {
+                    self.state = State::Err(e);
+                    return;
+                }
+
+                let to_config = egui::TopBottomPanel::bottom("cancel")
+                    .show(ctx, |ui| {
+                        ui.horizontal(|ui| {
+                            if ui
+                                .add_enabled(!data.is_done(), egui::Button::new("Cancel"))
+                                .clicked()
+                            {
+                                return true;
+                            }
+                            if data.is_done() {
+                                return ui
+                                    .with_layout(
+                                        egui::Layout::right_to_left(egui::Align::Center),
+                                        |ui| ui.button("OK"),
+                                    )
+                                    .inner
+                                    .clicked();
+                            }
+                            false
+                        })
+                        .inner
+                    })
                     .inner;
+
                 let _ = egui::CentralPanel::default().show(ctx, |ui| {
-                    ui.add_enabled_ui(false, |ui| self.config.add_ui(ui))
+                    ui.add_enabled_ui(false, |ui| self.config.add_ui(ui));
+                    ui.label("Output");
+                    egui::ScrollArea::new([false, true]).show(ui, |ui| ui.label(data.get_output()))
                 });
-                if cancel {
+
+                if to_config {
+                    self.state = State::Configuring;
+                }
+            }
+            State::Err(e) => {
+                let confirmed = egui::CentralPanel::default()
+                    .show(ctx, |ui| {
+                        ui.heading("Error!");
+                        let mut buf = e.to_string();
+
+                        ui.add_enabled(false, egui::TextEdit::multiline(&mut buf));
+                        ui.button("Ok")
+                    })
+                    .inner
+                    .clicked();
+                if confirmed {
                     self.state = State::Configuring;
                 }
             }

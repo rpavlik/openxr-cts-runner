@@ -6,3 +6,4 @@
 .*
 !.gitignore
 !.reuse
+conformance_cli*

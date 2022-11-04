@@ -5,6 +5,7 @@ use ctsrunner::CtsLauncherApp;
 
 fn main() {
     let options = eframe::NativeOptions::default();
+    eprintln!("{}", std::env::current_dir().unwrap().display());
     eframe::run_native(
         "OpenXR CTS Launcher",
         options,
