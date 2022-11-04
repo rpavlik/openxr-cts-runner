@@ -28,7 +28,7 @@ impl CtsProcess {
             .stderr(Redirection::Pipe)
             .stdout(Redirection::Pipe)
             .communicate()
-            .map_err(|e| Error::LaunchError(e))?
+            .map_err(Error::LaunchError)?
             .limit_time(time::Duration::from_millis(10));
 
         Ok(Self {

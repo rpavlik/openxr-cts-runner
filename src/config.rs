@@ -29,7 +29,7 @@ impl fmt::Display for GraphicsApi {
 }
 
 impl GraphicsApi {
-    pub fn to_arg(&self) -> &'static str {
+    pub fn to_arg(self) -> &'static str {
         match self {
             GraphicsApi::Vulkan => "Vulkan",
             GraphicsApi::Vulkan2 => "Vulkan2",

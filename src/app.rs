@@ -32,12 +32,8 @@ impl CtsLauncherApp {
     }
 }
 
-// impl CtsLauncherApp {
-//     fn add_config_parts(&self)
-// }
 impl eframe::App for CtsLauncherApp {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        // let state = self.state.take()
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { config, state } = self;
 
         match state {
