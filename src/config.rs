@@ -6,10 +6,17 @@ use core::fmt;
 #[derive(Debug, PartialEq, Eq, Clone, Copy, serde::Serialize, serde::Deserialize)]
 pub enum GraphicsApi {
     Vulkan,
+
     Vulkan2,
+
+    #[cfg(windows)]
     D3D11,
+
+    #[cfg(windows)]
     D3D12,
+
     OpenGL,
+
     #[cfg(not(windows))]
     OpenGLES,
 }
@@ -18,10 +25,17 @@ impl fmt::Display for GraphicsApi {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             GraphicsApi::Vulkan => write!(f, "Vulkan (XR_KHR_vulkan_enable)"),
+
             GraphicsApi::Vulkan2 => write!(f, "Vulkan (XR_KHR_vulkan_enable2)"),
+
+            #[cfg(windows)]
             GraphicsApi::D3D11 => write!(f, "Direct3D 11"),
+
+            #[cfg(windows)]
             GraphicsApi::D3D12 => write!(f, "Direct3D 12"),
+
             GraphicsApi::OpenGL => write!(f, "OpenGL"),
+
             #[cfg(not(windows))]
             GraphicsApi::OpenGLES => write!(f, "OpenGL ES"),
         }
@@ -32,10 +46,17 @@ impl GraphicsApi {
     pub fn to_arg(self) -> &'static str {
         match self {
             GraphicsApi::Vulkan => "Vulkan",
+
             GraphicsApi::Vulkan2 => "Vulkan2",
+
+            #[cfg(windows)]
             GraphicsApi::D3D11 => "D3D11",
+
+            #[cfg(windows)]
             GraphicsApi::D3D12 => "D3D12",
+
             GraphicsApi::OpenGL => "OpenGL",
+
             #[cfg(not(windows))]
             GraphicsApi::OpenGLES => "OpenGLES",
         }
