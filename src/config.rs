@@ -101,7 +101,9 @@ impl Config {
                 .selected_text(self.graphics_api.to_string())
                 .show_ui(ui, |ui| {
                     graphics_api_selectable_value(ui, &mut graphics_api, GraphicsApi::Vulkan);
+                    #[cfg(windows)]
                     graphics_api_selectable_value(ui, &mut graphics_api, GraphicsApi::D3D11);
+                    #[cfg(windows)]
                     graphics_api_selectable_value(ui, &mut graphics_api, GraphicsApi::D3D12);
                     graphics_api_selectable_value(ui, &mut graphics_api, GraphicsApi::OpenGL);
                 })
